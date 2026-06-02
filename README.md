@@ -1,80 +1,235 @@
-1. 系统概述
-图书馆管理系统是一个基于C语言开发的控制台应用程序，用于管理图书馆的图书信息、用户信息、借阅记录以及逾期罚款计算。系统采用模块化设计，使用链表数据结构来动态管理数据，并通过文件存储实现数据的持久化。
+# 图书馆管理系统
 
-2. 程序结构
-图书馆管理系统
-├── 注册/登录
-│   ├── create_user（注册功能）
-│   └── login（登录功能）
-│       ├── checkUserValid（用户验证）
-│       └── check_usernum（用户名校验）
-├── 读者功能
-│   ├── reader_search_books（查询书籍）
-│   │   ├── search_by_number（按编号查询）
-│   │   ├── search_by_name（按书名查询）
-│   │   └── search_by_category（按分类查询）
-│   ├── enhanced_borrow_book（借书）
-│   │   ├── 图书查找（search_by_number/name）
-│   │   ├── 状态检查（检查lent字段）
-│   │   └── append_borrow_record（记录添加）
-│   ├── 还书功能（main函数中实现）
-│   │   ├── search_by_number（图书查找）
-│   │   ├── 状态更新（修改lent字段）
-│   │   └── mark_record_returned（记录标记）
-│   ├── print_borrow_rules（借阅规则）
-│   └── list_borrow_records_by_user（借阅记录）
-├── 系统管理员功能
-│   ├── delete_sysuser（删除用户）
-│   │   ├── search_by_usernum（用户查找）
-│   │   └── override_to_sysuser_file（文件更新）
-│   ├── print_all_sysuser（用户列表）
-│   │   ├── make_sysuser_linklist（链表创建）
-│   │   └── print_sysusernode（数据显示）
-│   ├── list_all_borrow_records（全部借阅记录）
-│   │   ├── make_borrow_linklist（记录链表）
-│   │   └── print_one_borrow（记录显示）
-│   └── list_borrow_records_by_user（用户借阅查询）
-├── 图书管理员功能
-│   ├── input_new_book（录入图书）
-│   │   └── 文件追加（直接文件操作）
-│   ├── modify_book（修改图书）
-│   │   ├── search_by_number（图书查找）
-│   │   └── override_to_file（文件更新）
-│   └── delete_book（删除图书）
-│       ├── search_by_number（图书查找）
-│       └── override_to_file（文件更新）
-├── 核心支撑函数
-│   ├── make_linklist（图书链表创建）
-│   ├── days_between_dates（日期计算）
-│   ├── calc_overdue_fine（罚款计算）
-│   ├── override_to_file（图书文件更新）
-│   └── override_borrow_file（借阅记录更新）
-├── 显示函数
-│   ├── print_main_title（主标题）
-│   ├── print_booklist_title（图书列表标题）
-│   ├── print_booknode（单本图书信息）
-│   ├── print_sysuserlist_title（用户列表标题）
-│   ├── print_sysusernode（单个用户信息）
-│   └── print_borrow_title（借阅记录标题）
-└── 文件检查函数
-    ├── check_void_file（图书文件检查）
-    ├── check_sysuser_void_file（用户文件检查）
-    └── check_borrow_void_file（借阅文件检查）
+## 一、系统概述
 
-3.核心算法
-1. 链表管理算法
-线性搜索：遍历链表查找图书/用户，时间复杂度O(n)
-动态内存管理：使用malloc/free动态管理节点内存
-文件数据同步：链表与文本文件实时同步，保证数据持久化
-2. 日期计算算法
-时间戳转换：使用mktime将日期转为时间戳计算差值
-逾期自动计算：系统自动计算借阅天数，超期按天计费
-实时更新：基于系统当前时间进行动态计算
-3. 数据持久化算法
-全量覆盖写入：修改数据时重写整个文件确保一致性
-增量追加记录：借阅记录采用追加模式提高性能
-文本格式存储：使用结构化文本便于阅读和维护
-4. 用户认证算法
-线性匹配验证：遍历用户文件进行账号密码匹配
-多角色权限控制：不同角色拥有不同的功能访问权限
-输入安全处理：密码输入时隐藏字符显示这些名称符合我的代码吗
+图书馆管理系统是一个基于 C 语言开发的控制台应用程序，主要用于完成图书馆中的图书信息管理、用户信息管理、图书借阅与归还、借阅记录查询以及逾期罚款计算等功能。
+
+系统采用模块化设计思想，将程序功能划分为注册登录模块、读者功能模块、系统管理员功能模块、图书管理员功能模块、借阅记录管理模块和文件数据管理模块。程序使用链表结构动态管理图书、用户和借阅记录数据，并通过文本文件实现数据的读取与保存，使系统具有基本的数据持久化能力。
+
+本项目主要适合作为 C 语言课程设计或基础综合实践项目，能够体现结构体、链表、文件操作、函数封装、日期计算和菜单交互等知识点的综合应用。
+
+## 二、项目文件说明
+
+```text
+library-management-system
+├── LibraryManager.c        # 系统主程序源代码
+├── library.txt             # 图书信息数据文件
+├── user.txt                # 用户信息数据文件
+├── borrow_record.txt       # 借阅记录数据文件
+└── README.md               # 项目说明文档
+```
+
+其中：
+
+* `LibraryManager.c`：包含系统的全部功能实现。
+* `library.txt`：用于保存图书编号、书名、类别、借出状态和借出日期。
+* `user.txt`：用于保存用户账号和密码。
+* `borrow_record.txt`：用于保存用户借阅记录，包括用户账号、图书编号、书名、借出日期和归还状态。
+* `README.md`：用于说明项目功能、结构和运行方式。
+
+## 三、主要功能模块
+
+### 1. 注册与登录模块
+
+该模块主要负责用户注册、登录和账号验证。
+
+相关函数包括：
+
+* `create_user`：用户注册功能
+* `login`：用户登录功能
+* `checkUserValid`：验证用户账号和密码是否正确
+* `check_usernum`：检查用户账号是否已经注册
+
+系统在用户注册时会检查账号是否重复；登录时会根据 `user.txt` 文件中的账号和密码进行匹配。密码输入时通过 `getch()` 实现不直接显示在屏幕上的效果。
+
+### 2. 读者功能模块
+
+读者功能主要包括图书查询、借书、还书、查看借阅规则和查看个人借阅记录。
+
+相关函数包括：
+
+* `reader_search_books`：读者查询图书入口
+* `search_by_number`：按图书编号查询
+* `search_by_name`：按图书名称查询
+* `search_by_category`：按图书分类查询
+* `enhanced_borrow_book`：借书功能
+* `mark_record_returned`：标记借阅记录为已归还
+* `print_borrow_rules`：显示借阅规则
+* `list_borrow_records_by_user`：按用户账号查看借阅记录
+
+借书时，系统会先查找目标图书，并判断图书的 `lent` 字段。如果 `lent` 为 0，表示图书在库，可以借出；如果 `lent` 为 1，表示图书已经借出，不能重复借阅。
+
+还书功能主要在 `main` 函数的读者菜单中实现。还书时系统会根据图书编号查找图书，修改图书的借出状态，并调用 `mark_record_returned` 更新借阅记录。
+
+### 3. 系统管理员功能模块
+
+系统管理员功能主要用于用户信息管理和借阅记录查看。
+
+相关函数包括：
+
+* `make_sysuser_linklist`：根据 `user.txt` 创建用户链表
+* `search_by_usernum`：根据用户账号查找用户
+* `delete_sysuser`：删除用户
+* `override_to_sysuser_file`：将用户链表重新写入 `user.txt`
+* `print_all_sysuser`：显示所有用户
+* `print_sysuserlist_title`：输出用户列表标题
+* `print_sysusernode`：输出单个用户信息
+* `list_all_borrow_records`：查看全部借阅记录
+* `list_borrow_records_by_user`：按用户账号查询借阅记录
+
+需要说明的是，本系统在登录后通过菜单入口区分“读者”“系统管理员”和“图书管理员”功能，不是通过用户文件中的角色字段自动判断身份。
+
+### 4. 图书管理员功能模块
+
+图书管理员功能主要用于图书信息的维护，包括录入、修改和删除图书。
+
+相关函数包括：
+
+* `input_new_book`：录入新图书
+* `modify_book`：修改已有图书信息
+* `delete_book`：删除图书
+* `search_by_number`：根据编号查找图书
+* `override_to_file`：将图书链表重新写入 `library.txt`
+* `print_all_book`：显示全部图书信息
+
+当新增图书时，系统会将图书信息追加写入 `library.txt`。当修改或删除图书时，系统会先修改链表中的数据，再通过覆盖写入的方式更新图书文件。
+
+### 5. 借阅记录管理模块
+
+借阅记录模块用于保存和查询图书借阅情况。
+
+相关函数包括：
+
+* `make_borrow_linklist`：根据 `borrow_record.txt` 创建借阅记录链表
+* `append_borrow_record`：添加新的借阅记录
+* `override_borrow_file`：将借阅记录链表重新写入文件
+* `print_borrow_title`：输出借阅记录标题
+* `print_one_borrow`：输出单条借阅记录
+* `list_all_borrow_records`：显示全部借阅记录
+* `list_borrow_records_by_user`：显示指定用户的借阅记录
+* `mark_record_returned`：将指定借阅记录标记为已归还
+
+借书成功后，系统会调用 `append_borrow_record` 向 `borrow_record.txt` 中追加一条借阅记录。还书成功后，系统会调用 `mark_record_returned` 将对应记录的归还状态修改为已还。
+
+### 6. 文件检查与数据读取模块
+
+系统通过多个文件检查函数判断数据文件是否为空，并根据文件内容创建对应链表。
+
+相关函数包括：
+
+* `check_void_file`：检查 `library.txt` 是否为空
+* `check_sysuser_void_file`：检查 `user.txt` 是否为空
+* `check_borrow_void_file`：检查 `borrow_record.txt` 是否为空
+* `make_linklist`：根据 `library.txt` 创建图书链表
+* `make_sysuser_linklist`：根据 `user.txt` 创建用户链表
+* `make_borrow_linklist`：根据 `borrow_record.txt` 创建借阅记录链表
+
+## 四、核心实现思路
+
+### 1. 链表管理
+
+系统使用链表结构管理图书、用户和借阅记录。程序运行时会从文本文件中读取数据，并创建对应链表；在查询、修改、删除数据时，通过遍历链表完成相关操作。
+
+链表管理的主要特点包括：
+
+* 使用结构体保存图书、用户和借阅记录信息
+* 使用 `malloc` 动态申请节点空间
+* 通过 `next` 指针连接各个节点
+* 通过遍历链表完成查找、显示、修改和删除操作
+
+### 2. 文件持久化
+
+系统使用文本文件保存数据，实现基本的数据持久化。程序运行过程中，文件数据会被读入链表；当数据发生变化时，再将链表内容写回文件。
+
+文件写入方式主要包括：
+
+* 新增图书和新增借阅记录时，使用追加写入
+* 修改图书、删除图书、删除用户或更新借阅状态时，使用覆盖写入
+* 文件内容采用文本格式保存，便于查看和调试
+
+### 3. 图书查询与借还管理
+
+系统支持按照图书编号、图书名称和图书分类进行查询。借书时，系统会检查图书是否存在以及是否已经借出；还书时，系统会更新图书状态，并同步更新借阅记录。
+
+基本流程如下：
+
+```text
+输入查询条件
+        ↓
+查找图书信息
+        ↓
+判断图书是否存在
+        ↓
+判断图书借出状态
+        ↓
+执行借书或还书操作
+        ↓
+更新图书文件和借阅记录文件
+```
+
+### 4. 日期与逾期罚款计算
+
+系统设置默认借阅期限为 30 天，逾期后每天罚款 0.1 元。程序通过日期计算函数得到借阅日期与当前日期之间的天数，再判断是否超过借阅期限。
+
+相关函数包括：
+
+* `days_between_dates`：计算两个日期之间的间隔天数
+* `calc_overdue_fine`：计算逾期罚款
+
+逾期罚款的基本计算逻辑为：
+
+```text
+借阅天数 = 当前日期 - 借出日期
+逾期天数 = 借阅天数 - 30
+罚款金额 = 逾期天数 × 0.1
+```
+
+如果图书未逾期或已经归还，则罚款为 0。
+
+### 5. 菜单交互与功能划分
+
+系统采用多级菜单方式进行交互。用户登录后，可以选择进入读者、系统管理员或图书管理员功能界面。不同菜单下提供不同操作，增强了程序结构的清晰性。
+
+菜单功能主要包括：
+
+* 登录注册菜单
+* 读者功能菜单
+* 系统管理员功能菜单
+* 图书管理员功能菜单
+* 图书查询菜单
+* 借书与还书菜单
+
+## 五、项目特点
+
+1. 使用 C 语言实现，适合课程设计和基础项目练习。
+2. 使用结构体和链表管理数据，体现动态数据结构的应用。
+3. 使用文本文件保存数据，实现基本的数据持久化。
+4. 支持图书查询、借阅、归还和借阅记录查看。
+5. 支持逾期天数和预计罚款计算。
+6. 使用多级菜单组织功能，程序交互较清晰。
+7. 按功能入口划分读者、系统管理员和图书管理员操作。
+
+## 六、运行方式
+
+本项目为 Windows 控制台程序，代码中使用了 `windows.h` 和 `conio.h`，因此更适合在 Windows 环境下编译运行。
+
+使用 GCC 编译：
+
+```bash
+gcc LibraryManager.c -o LibraryManager
+```
+
+运行程序：
+
+```bash
+LibraryManager.exe
+```
+
+如果使用 Dev-C++、Code::Blocks 或 Visual Studio，也可以直接打开 `LibraryManager.c` 文件进行编译和运行。
+
+## 七、注意事项
+
+1. 运行程序前，请确保 `LibraryManager.c`、`library.txt`、`user.txt` 和 `borrow_record.txt` 位于同一目录下。
+2. 不建议随意修改数据文件格式，否则可能导致程序读取异常。
+3. `LibraryManager.exe` 是编译生成的可执行文件，一般不需要上传到 GitHub。
+4. 如果上传到 GitHub，建议上传源代码文件、数据文件和 README 文件即可。
